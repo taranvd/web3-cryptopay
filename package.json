@@ -1,0 +1,29 @@
+{
+  "name": "web3-monobank",
+  "version": "1.0.0",
+  "description": "WEB-3 pet project",
+  "license": "MIT",
+  "author": "taranvd",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "frontend:dev": "npm run dev --workspace frontend",
+    "backend:dev": "npm run start:dev --workspace backend",
+    "backend:prod": "npm run start:prod --workspace backend",
+    "start:prod": "npm run start --workspace backend",
+    "frontend:lint": "npm run lint --workspace frontend",
+    "backend:lint": "npm run lint --workspace backend",
+    "build:frontend": "npm run build --workspace frontend",
+    "build:backend": "npm run build --workspace backend",
+    "pre-commit": "npm install && npm run build:frontend && npm run build:backend",
+    "start": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "prepare": "husky"
+  },
+  "workspaces": [
+    "packages/frontend",
+    "packages/backend"
+  ],
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
