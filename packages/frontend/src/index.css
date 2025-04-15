@@ -5,12 +5,61 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background: linear-gradient(
+          135deg,
+          #003087 0%,
+          #009cde 30%,
+          #6e2bff 60%,
+          #00ffaa 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientMove 8s ease infinite;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.glass-table .ant-table {
+  background: transparent;
+  color: #fff;
+}
+
+.glass-table .ant-table-thead > tr > th {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-table .ant-table-tbody > tr:hover > td {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.glass-table .ant-pagination-item a {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.glass-table .ant-pagination-item-active {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: transparent;
 }
 
 a {
@@ -24,12 +73,15 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+h1,h2,h3 {
+  margin: 0;
 }
 
 button {
