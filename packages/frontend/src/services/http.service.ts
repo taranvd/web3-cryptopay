@@ -7,7 +7,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
 interface HttpConfig extends AxiosRequestConfig {
-  url: string;
   withAuth?: boolean;
 }
 
@@ -49,7 +48,7 @@ export default class HttpService {
 
     const headers = withAuth ? { ...this.populateTokenToHeaderConfig() } : {};
 
-    const fullUrl = this.getFullApiUrl(config.url);
+    const fullUrl = this.getFullApiUrl(config.url!);
     try {
       const response = await this.fetchingService.get(fullUrl, {
         ...this.extractUrlAndDataFromConfig(restConfig),
@@ -65,7 +64,7 @@ export default class HttpService {
   async put<T>(config: HttpConfig): Promise<T> {
     const { withAuth = true, ...restConfig } = config;
     const headers = withAuth ? { ...this.populateTokenToHeaderConfig() } : {};
-    const fullUrl = this.getFullApiUrl(config.url);
+    const fullUrl = this.getFullApiUrl(config.url!);
     try {
       const response = await this.fetchingService.put(fullUrl, config.data, {
         ...this.extractUrlAndDataFromConfig(restConfig),
