@@ -1,10 +1,68 @@
 // @ts-nocheck
 import React from "react";
-import { Card } from "antd";
+import { Card, Input, message, Modal } from "antd";
 import { FaEthereum } from "react-icons/fa";
 import { AiOutlineUser } from "react-icons/ai";
+import { useUserStore } from "../../storage/user.storage.ts";
+import {
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
+import { shortenAddress } from "../../utils/shorten-address.util.ts";
+import { ethers } from "ethers";
+import { sepolia } from "@wagmi/chains";
+import ABI from "../../assets/abi.json";
 
-function AccountDetails({}) {
+function AccountDetails() {
+  const [nameModal, setNameModal] = React.useState(false);
+  const [username, setUsername] = React.useState("");
+  const balance = useUserStore((state) => state.balance);
+  const name = useUserStore((state) => state.name);
+  const getUser = useUserStore((state) => state.getUserData);
+  const { address } = useAccount();
+
+  const { config } = usePrepareContractWrite({
+    chainId: sepolia.id,
+    address: import.meta.env.VITE_CONTRACT_ADDRESS,
+    abi: ABI,
+    functionName: "addName",
+    args: [username],
+    overrides: {
+      value: 0,
+    },
+  });
+
+  const { write, data } = useContractWrite(config);
+
+  const { isSuccess, isLoading, isFetching } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+
+  React.useEffect(() => {
+    if (isLoading || isFetching) {
+      message.loading({ content: "Processing...", key: "loading" });
+    }
+
+    if (isSuccess) {
+      message.success({
+        content: "Username set successfully",
+        key: "success",
+        duration: 2,
+      });
+      getUser();
+    }
+  }, [isLoading, isSuccess]);
+
+  const showNameModal = () => {
+    setNameModal(true);
+  };
+
+  const hideNameModal = () => {
+    setNameModal(false);
+  };
+
   return (
     <Card
       title="Account Details"
@@ -33,10 +91,10 @@ function AccountDetails({}) {
         </div>
         <div>
           <div className="font-bold text-sm text-[rgba(255,255,255,0.8)]">
-            Moralis Mage
+            {name ? name : "Set a username"}
           </div>
           <div className="text-[rgba(255,255,255,0.6)] text-xs font-semibold">
-            Address: 0x12...3456
+            Address: {shortenAddress(address)}
           </div>
         </div>
       </div>
@@ -51,14 +109,32 @@ function AccountDetails({}) {
             Native ETH Tokens
           </div>
           <div className="text-[rgba(255,255,255,0.6)] text-xs font-semibold">
-            100.32 ETH
+            {balance} ETH
           </div>
         </div>
       </div>
 
       {/* Buttons Section */}
+      <Modal
+        title="Set a username"
+        open={nameModal}
+        onOk={() => {
+          write?.();
+          hideNameModal();
+        }}
+        onCancel={hideNameModal}
+        okText="Proceed To Set"
+        cancelText="Cancel"
+      >
+        <Input
+          placeholder="Vitalik Buterin"
+          value={username}
+          onChange={(val) => setUsername(val.target.value)}
+        />
+      </Modal>
       <div className="mt-5 flex justify-center items-center gap-5 pb-2">
         <div
+          onClick={showNameModal}
           className="w-[180px] text-center border-2 border-[rgba(255,255,255,0.3)] rounded-full font-semibold text-white transition-colors duration-400 hover:bg-[rgba(255,255,255,0.2)] hover:cursor-pointer py-2"
           style={{ backdropFilter: "blur(4px)" }}
         >

@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { Card } from "antd";
+import { useUserStore } from "../../storage/user.storage.ts";
 
 const Balance = () => {
+  const dollars = useUserStore((state) => state.dollars);
   return (
     <Card
       title="Current Balance"
@@ -27,7 +29,6 @@ const Balance = () => {
         padding: "24px",
       }}
     >
-      {/* Додатковий ефект підсвітки */}
       <div
         style={{
           position: "absolute",
@@ -43,7 +44,7 @@ const Balance = () => {
 
       <div className="relative z-10">
         <div className="flex items-end gap-10">
-          <h2 className="text-6xl font-bold text-white">$676.12</h2>
+          <h2 className="text-6xl font-bold text-white">${dollars}</h2>
           <span className="text-xl text-white opacity-80">Available</span>
         </div>
 

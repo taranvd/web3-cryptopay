@@ -1,76 +1,11 @@
 // @ts-nocheck
 import { Card, Table } from "antd";
-
-const history = [
-  {
-    key: "1",
-    subject: "Mike",
-    type: "Send",
-    address: "0x12...2345",
-    message: "Cookies 🍪",
-    amount: "3.50",
-  },
-  {
-    key: "2",
-    subject: "Amanda",
-    type: "Receive",
-    address: "0x12...2345",
-    message: "Dinner 🍔",
-    amount: "22.30",
-  },
-  {
-    key: "3",
-    subject: "Roy",
-    type: "Send",
-    address: "0x12...2345",
-    message: "Movie Tickets",
-    amount: "17.31",
-  },
-  {
-    key: "4",
-    subject: "Amanda",
-    type: "Send",
-    address: "0x12...2345",
-    message: "Lunch",
-    amount: "9.20",
-  },
-  {
-    key: "5",
-    subject: "Charlie",
-    type: "Send",
-    address: "0x12...2345",
-    message: "Golf ⛳️",
-    amount: "49.99",
-  },
-  {
-    key: "6",
-    subject: "Charlie",
-    type: "Receive",
-    address: "0x12...2345",
-    message: "Gatorade",
-    amount: "2.30",
-  },
-  {
-    key: "7",
-    subject: "Mike",
-    type: "Send",
-    address: "0x12...2345",
-    message: "Poker ♠️",
-    amount: "3.50",
-  },
-  {
-    key: "8",
-    subject: "Jimmy",
-    type: "Send",
-    address: "0x12...2345",
-    message: "Car Fix",
-    amount: "30.00",
-  },
-];
+import { useUserStore } from "../../storage/user.storage.ts";
+import { ethers } from "ethers";
 
 const columns = [
   {
-    title: "Payment Subjet",
+    title: "Payment Subject",
     dataIndex: "subject",
     key: "subject",
   },
@@ -93,18 +28,22 @@ const columns = [
   {
     title: "Amount",
     key: "amount",
-    render: (_, record) => (
-      <div
-        style={record.type === "Send" ? { color: "red" } : { color: "green" }}
-      >
-        {record.type === "Send" ? "-" : "+"}
-        {record.amount} ETH
-      </div>
-    ),
+    render: (_, record) => {
+      return (
+        <div
+          style={record.type === "Send" ? { color: "red" } : { color: "green" }}
+        >
+          {record.type === "Send" ? "-" : "+"}
+          {ethers.utils.formatEther(record.amount)} ETH
+        </div>
+      );
+    },
   },
 ];
 
-function RecentActivity({}) {
+function RecentActivity() {
+  const history = useUserStore((state) => state.history);
+
   return (
     <Card
       title="Recent Activity"
@@ -132,17 +71,34 @@ function RecentActivity({}) {
         borderRadius: "0 0 16px 16px",
       }}
     >
-      {history && (
+      {history && history.length > 0 ? (
         <Table
           dataSource={history}
           columns={columns}
           pagination={{ position: ["bottomCenter"], pageSize: 8 }}
           style={{
             background: "transparent",
+            backgroundColor: "transparent",
+            td: {
+              background: "transparent",
+              backgroundColor: "transparent",
+            },
             color: "#fff",
           }}
           className="glass-table"
         />
+      ) : (
+        <div
+          style={{
+            textAlign: "center",
+            color: "#fff",
+            padding: "20px",
+            background: "rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+          }}
+        >
+          No recent activity available
+        </div>
       )}
     </Card>
   );
